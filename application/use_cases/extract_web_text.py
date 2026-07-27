@@ -21,6 +21,6 @@ class ExtractWebText:
         if html is None:
             return None
 
-        texto = self.extractor.adapt(html)
+        text = self.extractor.adapt(html)
 
-        return texto
+        return text
