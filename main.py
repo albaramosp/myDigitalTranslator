@@ -1,7 +1,7 @@
 from application.use_cases.extract_web_text import ExtractWebText
 from application.use_cases.translate_web_text import TranslateWebText
 from domain.prompts.autism_adapter_prompt import AutismAdapterPrompt
-from infrastructure.llm.gemini_client import GeminiLlmClient
+from infrastructure.llm.llm_factory import LlmFactory
 from infrastructure.requests_web_downloader import RequestsWebDownloader
 from infrastructure.trafilatura_parser import TrafilaturaWebAdapter
 
@@ -26,10 +26,10 @@ if __name__ == '__main__':
         adapter=TrafilaturaWebAdapter()
     )
 
-    text = uc.execute(urls[3])
+    text = uc.execute(urls[4])
     if text:
         adapted_text = TranslateWebText(
-            GeminiLlmClient(),
+            LlmFactory.create(),
             AutismAdapterPrompt()
         ).execute(text)
 
