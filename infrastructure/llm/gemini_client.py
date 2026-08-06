@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from domain.llm.llm_request import LlmRequest
+from domain.llm.llm_response import LlmResponse
 
 
 class GeminiLlmClient(LlmClient):
@@ -12,13 +13,16 @@ class GeminiLlmClient(LlmClient):
         load_dotenv()
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
         self._client = genai.Client()
+        self.model = "gemini-3-flash-preview"
 
     def generate(self, request: LlmRequest):
         response = self._client.models.generate_content(
-            model="gemini-3-flash-preview",  # free model
+            model=self.model,
             contents=request.user_prompt,
             config=genai.types.GenerateContentConfig(
                 system_instruction=request.system_prompt
             ))
 
-        return response.text
+        return LlmResponse(
+            content=response.text,
+            tokens=response.usage_metadata.total_token_count)   
