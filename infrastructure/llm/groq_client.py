@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from domain.llm.llm_request import LlmRequest
+from domain.llm.llm_response import LlmResponse
 
 
 class GroqLlmClient(LlmClient):
@@ -13,6 +14,7 @@ class GroqLlmClient(LlmClient):
         self._client = Groq(
             api_key=os.environ.get("GROQ_API_KEY"),
         )
+        self.model = "llama-3.3-70b-versatile"
 
     def generate(self, request: LlmRequest):
         chat_completion = self._client.chat.completions.create(
@@ -26,7 +28,10 @@ class GroqLlmClient(LlmClient):
                     "content": request.system_prompt,
                 }
             ],
-            model="llama-3.3-70b-versatile",
+            model=self.model,
         )
 
-        return chat_completion.choices[0].message.content
+        return LlmResponse(
+            content=chat_completion.choices[0].message.content,
+            tokens=chat_completion.usage.total_tokens
+        )
