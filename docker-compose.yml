@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  mydigitaltranslator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mydigitaltranslator
+    environment:
+      # LLM Configuration - Set these in your .env file or pass them explicitly
+      # For Google GenAI:
+      # - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      
+      # For Groq:
+      # - GROQ_API_KEY=${GROQ_API_KEY}
+      
+      # Other environment variables
+      PYTHONUNBUFFERED: "1"
+    env_file:
+      - .env
+    volumes:
+      # Mount source code for development
+      - .:/app
+      # Mount logs if needed
+      - ./logs:/app/logs
+    networks:
+      - mydigitaltranslator-network
+    restart: unless-stopped
+
+networks:
+  mydigitaltranslator-network:
+    driver: bridge
