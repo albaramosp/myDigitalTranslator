@@ -1,0 +1,30 @@
+services:
+
+  app:
+    build: ..
+    container_name: magma
+    ports:
+      - "8501:8501"
+    volumes:
+      #- ./magma:/app/magma
+      - ./magma_db:/app/magma_db
+      - ./magma_docs:/app/magma_docs
+      - huggingface_cache:/root/.cache/huggingface
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    #restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: mdt_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
+  huggingface_cache:

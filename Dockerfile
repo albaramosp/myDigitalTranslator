@@ -21,6 +21,7 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock* ./
 COPY application ./application
 COPY domain ./domain
+COPY llama ./llama
 COPY infrastructure ./infrastructure
 COPY main.py logging_config.py ./
 
@@ -28,4 +29,4 @@ COPY main.py logging_config.py ./
 RUN uv sync --frozen
 
 # Run the application
-CMD ["uv", "run", "python", "main.py"]
+CMD ["uv", "run", "python", "serve.py"]

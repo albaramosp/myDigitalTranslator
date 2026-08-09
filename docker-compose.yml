@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: mydigitaltranslator
     environment:
-      # LLM Configuration - Set these in your .env file or pass them explicitly
+      # LLM Configuration - Set these in your .env.example file or pass them explicitly
       # For Google GenAI:
       # - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       
@@ -17,16 +17,34 @@ services:
       # Other environment variables
       PYTHONUNBUFFERED: "1"
     env_file:
-      - .env
+      - .env.example
     volumes:
       # Mount source code for development
       - .:/app
+      - ./magma_db:/app/magma_db
+      - ./magma_docs:/app/magma_docs
+      - huggingface_cache:/root/.cache/huggingface
+
       # Mount logs if needed
       - ./logs:/app/logs
     networks:
       - mydigitaltranslator-network
     restart: unless-stopped
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: mdt_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+
+
 networks:
   mydigitaltranslator-network:
     driver: bridge
+    
+volumes:
+  ollama_models:
+  huggingface_cache:
