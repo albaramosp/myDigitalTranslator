@@ -16,6 +16,8 @@ services:
       
       # Other environment variables
       PYTHONUNBUFFERED: "1"
+    depends_on:
+      - ollama
     env_file:
       - .env.example
     volumes:
@@ -39,6 +41,8 @@ services:
     volumes:
       - ollama_models:/root/.ollama
     restart: unless-stopped
+    networks:
+      - mydigitaltranslator-network
 
 
 networks:
