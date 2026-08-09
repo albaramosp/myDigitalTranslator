@@ -49,14 +49,13 @@ from langchain_chroma import Chroma
 class LlamaClient(LlmClient):
 
     def generate(self, request: LlmRequest) -> LlmResponse:
-        user_prompt = f"Analiza el siguiente texto:\n{request.user_prompt}"
+        user_prompt = f"{request.system_prompt}\\nAnaliza el siguiente texto:\n\n{request.user_prompt}"
         try:
-            self.chain, self.stats = load_chain(request.system_prompt)
-
+            self.chain, self.stats = load_chain(request.user_prompt)
+            return LlmResponse(self.chain.invoke(user_prompt), 0)
         except ValueError as e:
             print(e)
             exit(1)
-        return LlmResponse(self.chain.invoke(user_prompt), 0)
 
 
 

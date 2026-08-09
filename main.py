@@ -28,14 +28,17 @@ if __name__ == '__main__':
         adapter=TrafilaturaWebAdapter()
     )
 
-    text = uc.execute(urls[0])
-    if text:
-        adapted_text = TranslateWebText(
-            LlmFactory.create(),
-            AutismAdapterPrompt()
-        ).execute(text)
+    for url in urls:
+        text = uc.execute(url)
+        if text:
+            adapted_text = TranslateWebText(
+                LlmFactory.create(),
+                AutismAdapterPrompt()
+            ).execute(text)
 
-        print(adapted_text)
+            print(adapted_text)
+            print("***************")
+
 
 
 
