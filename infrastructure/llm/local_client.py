@@ -45,6 +45,20 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
+
+class LlamaClient(LlmClient):
+
+    def generate(self, request: LlmRequest) -> LlmResponse:
+        try:
+            self.chain, self.stats = load_chain(request.system_prompt)
+
+        except ValueError as e:
+            print(e)
+            exit(1)
+        return LlmResponse(self.chain.invoke(request.user_prompt), 0)
+
+
+
 def get_embeddings() -> HuggingFaceEmbeddings:
     """Load local embedding model (downloads once, cached afterwards)."""
     return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
@@ -105,23 +119,11 @@ def build_vectorstore(embeddings: HuggingFaceEmbeddings) -> tuple[Chroma, dict]:
     }
     return vectorstore, stats
 
-class LlamaClient(LlmClient):
-    def __init__(self):
-        try:
-            self.chain, self.stats = load_chain()
-        except ValueError as e:
-            print(e)
-            exit(1)
-
-    def generate(self, request: LlmRequest) -> LlmResponse:
-        return LlmResponse(self.chain.invoke(request.user_prompt), 0)
-
-
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 
-def build_chain(vectorstore: Chroma):
+def build_chain(vectorstore: Chroma, system_prompt: str):
     """Assemble the full RAG chain using LCEL."""
     llm = ChatOllama(
         base_url=OLLAMA_HOST,
@@ -133,7 +135,7 @@ def build_chain(vectorstore: Chroma):
 
     chain = (
             {"context": retriever | format_docs, "question": RunnablePassthrough()}
-            | MAIN_PROMPT
+            | PromptTemplate.from_template(system_prompt)
             | llm
             | StrOutputParser()
     )
@@ -141,8 +143,8 @@ def build_chain(vectorstore: Chroma):
     return chain
 
 
-def load_chain():
+def load_chain(system_prompt: str):
     embeddings = get_embeddings()
     vectorstore, stats = build_vectorstore(embeddings)
-    chain = build_chain(vectorstore)
+    chain = build_chain(vectorstore, system_prompt)
     return chain, stats
