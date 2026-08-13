@@ -1,6 +1,6 @@
 from application.use_cases.extract_web_text import ExtractWebText
-from application.use_cases.translate_web_text import TranslateWebText
-from domain.prompts.autism_adapter_prompt import AutismAdapterPrompt
+from application.use_cases.adapt_web_text import AdaptWebText
+from domain.prompts.prompts import TextClassificationPrompt
 from infrastructure.llm.llm_factory import LlmFactory
 from infrastructure.requests_web_downloader import RequestsWebDownloader
 from infrastructure.trafilatura_parser import TrafilaturaWebAdapter
@@ -28,11 +28,10 @@ if __name__ == '__main__':
         adapter=TrafilaturaWebAdapter()
     )
 
-    text = uc.execute(urls[0])
+    text = uc.execute(urls[2])
     if text:
-        adapted_text = TranslateWebText(
-            LlmFactory.create(),
-            AutismAdapterPrompt()
+        adapted_text = AdaptWebText(
+            LlmFactory.create()
         ).execute(text)
 
         print(adapted_text)
