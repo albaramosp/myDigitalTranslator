@@ -1,14 +1,14 @@
 from application.ports.llm_client import LlmClient
-from domain.prompts.prompt_builder import PromptBuilder
+from domain.prompts.prompts import Prompt
 from domain.llm.llm_response import LlmResponse
 import logging
 
-class TranslateWebText:
+class ExecutePrompt:
 
     def __init__(
             self,
             llm: LlmClient,
-            prompt_builder: PromptBuilder
+            prompt_builder: Prompt
     ):
         self._llm = llm
         self._prompt_builder = prompt_builder

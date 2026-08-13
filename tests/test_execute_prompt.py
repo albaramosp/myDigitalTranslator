@@ -1,16 +1,16 @@
 import unittest
 from unittest.mock import Mock
 
-from application.use_cases.translate_web_text import TranslateWebText
+from application.use_cases.execute_prompt import ExecutePrompt
 from domain.llm.llm_request import LlmRequest
 from domain.llm.llm_response import LlmResponse
 
 
-class TranslateWebTextTests(unittest.TestCase):
+class ExecutePromptTests(unittest.TestCase):
     def setUp(self):
         self._mocked_llm_client = Mock()
         self._mocked_prompt_builder = Mock()
-        self._sut = TranslateWebText(
+        self._sut = ExecutePrompt(
             self._mocked_llm_client,
             self._mocked_prompt_builder,
         )

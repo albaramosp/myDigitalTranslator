@@ -20,7 +20,8 @@ class GeminiLlmClient(LlmClient):
             model=self.model,
             contents=request.user_prompt,
             config=genai.types.GenerateContentConfig(
-                system_instruction=request.system_prompt
+                system_instruction=request.system_prompt,
+                response_mime_type="application/json"
             ))
 
         return LlmResponse(

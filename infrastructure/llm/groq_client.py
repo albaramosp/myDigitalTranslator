@@ -29,6 +29,7 @@ class GroqLlmClient(LlmClient):
                 }
             ],
             model=self.model,
+            response_format={"type": "json_object"}
         )
 
         return LlmResponse(
