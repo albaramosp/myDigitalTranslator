@@ -9,4 +9,18 @@ dependencies = [
     "groq>=1.6.0",
     "python-dotenv>=1.2.2",
     "trafilatura>=2.2.0",
+    "pydantic>=2.13.4"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "flake8",
+]
+
+[tool.setuptools.packages.find]
+include = [
+    "domain*",
+    "application*",
+    "infrastructure*",
 ]
