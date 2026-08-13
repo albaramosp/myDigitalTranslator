@@ -3,6 +3,7 @@ from unittest.mock import Mock
 
 from application.use_cases.translate_web_text import TranslateWebText
 from domain.llm.llm_request import LlmRequest
+from domain.llm.llm_response import LlmResponse
 
 
 class TranslateWebTextTests(unittest.TestCase):
@@ -21,8 +22,13 @@ class TranslateWebTextTests(unittest.TestCase):
             user_prompt="adapted"
         )
 
+        response = LlmResponse(
+            content="answer",
+            tokens=10
+        )
+
         self._mocked_prompt_builder.build.return_value = request
-        self._mocked_llm_client.generate.return_value = "answer"
+        self._mocked_llm_client.generate.return_value = response
 
         result = self._sut.execute("original")
 
