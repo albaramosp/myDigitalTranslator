@@ -12,7 +12,7 @@ class Prompt(ABC):
 
     @staticmethod
     @abstractmethod
-    def parse(response) -> LlmRequest:
+    def parse(response):
         ...
 
 
