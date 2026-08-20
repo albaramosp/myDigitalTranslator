@@ -14,7 +14,7 @@ class GroqLlmClient(LlmClient):
         self._client = Groq(
             api_key=os.environ.get("GROQ_API_KEY"),
         )
-        self.model = "llama-3.3-70b-versatile"
+        self.model = os.getenv("GROQ_MODEL")
 
     def generate(self, request: LlmRequest):
         chat_completion = self._client.chat.completions.create(
