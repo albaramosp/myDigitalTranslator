@@ -13,7 +13,7 @@ class GeminiLlmClient(LlmClient):
         load_dotenv()
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
         self._client = genai.Client()
-        self.model = "gemini-3-flash-preview"
+        self.model = os.getenv("GEMINI_MODEL")
 
     def generate(self, request: LlmRequest):
         response = self._client.models.generate_content(

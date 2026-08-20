@@ -57,14 +57,12 @@ class TextClassificationPrompt(Prompt):
                 - news
                 - forum
                 - travel
-                - generic
-            
+            En el caso de que no encuentres ningun tipo como estos, deberás establecer el tipo 'generic'
             Devuelve exclusivamente un JSON con este formato:
             {
                 "type": "...",
                 "confidence": 0.93
             }
-            
             """
         )
 
