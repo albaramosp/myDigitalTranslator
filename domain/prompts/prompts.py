@@ -41,6 +41,40 @@ class Response(BaseModel):
     content: str
 
 
+class SynthesizePrompt(Prompt):
+    response_model = Response
+
+    @staticmethod
+    def parse(response: str) -> Response:
+        return Response.model_validate_json(response)
+
+    @staticmethod
+    def build(text: str) -> LlmRequest:
+        return LlmRequest(
+            user_prompt=text,
+            system_prompt="""
+            Recibirás información procedente de varias fuentes.
+
+            Combina la información en un único documento coherente.
+
+            - Elimina información duplicada.
+            - Agrupa información relacionada.
+            - Si varias fuentes aportan información complementaria,
+              combínala.
+            - No inventes información.
+            - Si existen contradicciones importantes, indícalas.
+            - Conserva la información relevante para planificar
+              o comprender el contenido.
+
+            Devuelve exclusivamente un JSON válido:
+
+            {
+                "content": "..."
+            }
+            """
+        )
+
+
 class TextClassificationPrompt(Prompt):
     response_model = ClassificationResponse
 
@@ -101,7 +135,11 @@ class NewsPrompt(Prompt):
             system_prompt="""
             Resume objetivamente la noticia. Elimina sensacionalismo, opiniones y lenguaje emocional. 
             Conserva fechas, hechos, lugares, protagonistas, consecuencias y demás información objetiva.
-            Devuelve el contenido en un formato json
+            Devuelve exclusivamente un JSON válido:
+
+            {
+                "content": "..."
+            }
             """
         )
 
@@ -123,7 +161,11 @@ class ForumPrompt(Prompt):
              - elimina el lenguaje ambiguo o implícito, traduciéndolo a un lenguaje directo, neutral y estrictamente literal.
              - resume de forma muy clara y directa lo que está permitido y lo que no. 
             
-            Devuelve el contenido en un formato json
+            Devuelve exclusivamente un JSON válido:
+
+            {
+                "content": "..."
+            }
             """
         )
 
@@ -143,7 +185,11 @@ class PlanningPrompt(Prompt):
             Organiza la información en un itinerario paso a paso, lo más detallado y cronológico posible, 
             permitiendo a la persona anticipar cada momento. 
             
-            Devuelve el contenido en un formato json
+            Devuelve exclusivamente un JSON válido:
+
+            {
+                "content": "..."
+            }
             """
         )
 
@@ -162,6 +208,10 @@ class GenericPrompt(Prompt):
             system_prompt="""
             Resume el contenido eliminando el lenguaje figurado o irónico,  
             
-            Devuelve el contenido en un formato json
+            Devuelve exclusivamente un JSON válido:
+
+            {
+                "content": "..."
+            }
             """
         )

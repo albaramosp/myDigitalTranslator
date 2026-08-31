@@ -1,14 +1,13 @@
 from application.use_cases.execute_prompt import ExecutePrompt
 from domain.prompts.prompts import PromptFactory, TextClassificationPrompt, FormattingPrompt
 from application.ports.llm_client import LlmClient
-import json
 
 
-class AdaptWebText:
+class AdaptSingleWebText:
     def __init__(self, llm: LlmClient):
         self._llm = llm
 
-    def execute(self, text):
+    def execute(self, text: str):
         classification_prompt = TextClassificationPrompt()
         classification = classification_prompt.parse(
             ExecutePrompt(
@@ -24,10 +23,6 @@ class AdaptWebText:
             adaptation_prompt
         ).execute(text)
 
-        formatting_prompt = FormattingPrompt() 
-        formatted = ExecutePrompt(
-            self._llm,
-           formatting_prompt
-        ).execute(adaptation_prompt.parse(adapted_text))
-
-        return formatting_prompt.parse(formatted).content
+        return adaptation_prompt.parse(
+            adapted_text
+        )

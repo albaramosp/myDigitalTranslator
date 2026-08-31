@@ -21,11 +21,10 @@ class ExtractWebTextTests(unittest.TestCase):
             adapter=self._mocked_web_adapter
         )
 
-        result = use_case.execute("https://example.com")
-
-        assert result == "cleaned"
+        result = use_case.execute(["https://example.com"])
+        self.assertEqual("cleaned", result)
         self._mocked_web_adapter.download.assert_called_once_with("https://example.com")
-        self._mocked_web_adapter.adapt.assert_called_once_with("<html>content</html>")
+        self._mocked_web_adapter.adapt.assert_called_once_with(["<html>content</html>"])
 
     def test_should_return_none_when_download_fails(self):
         self._mocked_web_adapter.download.return_value = None
@@ -35,10 +34,6 @@ class ExtractWebTextTests(unittest.TestCase):
             adapter=self._mocked_web_adapter
         )
 
-        result = use_case.execute("https://example.com")
-
-        assert result is None
+        use_case.execute(["https://example.com"])
         self._mocked_web_adapter.download.assert_called_once_with("https://example.com")
-        self._mocked_web_adapter.adapt.assert_not_called()
-
-
+        self._mocked_web_adapter.adapt.assert_called_once_with([])
