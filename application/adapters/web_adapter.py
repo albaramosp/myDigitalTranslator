@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List
 
 
 class WebAdapter(ABC):
@@ -9,5 +9,5 @@ class WebAdapter(ABC):
     """
     @staticmethod
     @abstractmethod
-    def adapt(html: str) -> Optional[str]:
+    def adapt(htmls: List[str]) -> List[str]:
         pass

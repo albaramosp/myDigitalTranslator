@@ -1,6 +1,5 @@
 from application.ports.llm_client import LlmClient
 from domain.prompts.prompts import Prompt
-from domain.llm.llm_response import LlmResponse
 import logging
 
 class ExecutePrompt:
@@ -19,3 +18,9 @@ class ExecutePrompt:
         logger = logging.getLogger("mydigitaltranslator")
         logger.debug(f"Tokens: {llm_response.tokens}")
         return llm_response.content
+
+    def stream(self, user_input: str):
+        llm_request = self._prompt_builder.build(user_input)
+
+        for chunk in self._llm.stream(llm_request):
+            yield chunk
