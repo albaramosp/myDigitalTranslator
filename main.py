@@ -3,6 +3,8 @@ from typing import List
 
 from application.use_cases.adapt_multiple_web_texts import AdaptMultipleWebTexts
 from application.use_cases.extract_web_text import ExtractWebText
+from application.use_cases.semantic_search import SemanticSearch
+from infrastructure.embeddings.gemini_embedding_client import GeminiEmbeddingClient
 from infrastructure.llm.llm_factory import LlmFactory
 from infrastructure.requests_web_downloader import RequestsWebDownloader
 from infrastructure.trafilatura_parser import TrafilaturaWebAdapter
@@ -22,9 +24,17 @@ def analyze_streaming(user_input: List[str]):
             yield error_msg
             return
 
-        yield from AdaptMultipleWebTexts(
-            LlmFactory.create()
-        ).stream(texts)
+        accumulated = ""
+
+        for chunk in AdaptMultipleWebTexts(
+                LlmFactory.create()
+        ).stream(texts):
+            accumulated += chunk
+            yield accumulated, []
+
+        chunks = GeminiEmbeddingClient().embed(accumulated)
+
+        yield accumulated, chunks
 
     except Exception as err:
         logger = logging.getLogger("mydigitaltranslator")
@@ -53,6 +63,11 @@ def analyze(user_input: List[str]) -> str:
         return error_msg
 
 
+def search_summary(user_input, chunks):
+    c = SemanticSearch(GeminiEmbeddingClient())
+    return c.semantic_search(user_input, chunks, 1)[0]
+
+
 if __name__ == '__main__':
     setup_logging()
 
@@ -79,11 +94,24 @@ if __name__ == '__main__':
             outputs=[url_input, status, urls_state]
         )
 
-        report_btn.click(
+        semantic_index_state = gradio.State([])
+
+        accumulated = report_btn.click(
             fn=analyze_streaming,
             inputs=urls_state,
-            outputs=report_output
+            outputs=[report_output, semantic_index_state]
         )
+
+        with gradio.Accordion("Semantic Search"):
+            search_box = gradio.Textbox(
+                label="Ask about the summary"
+            )
+            search_btn = gradio.Button("Search")
+            search_btn.click(
+                fn=search_summary,
+                inputs=[search_box, semantic_index_state],
+                outputs=gradio.Markdown()
+            )
 
     demo.launch()
 
