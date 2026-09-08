@@ -60,7 +60,7 @@ class GroqLlmClient(LlmClient):
                     }
                 ],
                 model=self.model,
-                response_format={"type": "json_object"},
+                response_format={"type": "json_object"} if request.json_output else None,
                 stream=True
             )
 

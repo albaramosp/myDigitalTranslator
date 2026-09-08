@@ -35,7 +35,7 @@ class LiteLlmClient(LlmClient):
                 model=self._groq_model,
                 fallbacks=[self._gemini_model],
                 reasoning_effort="none",
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"} if request.json_output else None
             )
 
             return LlmResponse(

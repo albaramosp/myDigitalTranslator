@@ -6,5 +6,5 @@ from domain.semantic_chunk import SemanticChunk
 
 class EmbeddingClient(ABC):
     @abstractmethod
-    def embed(self, text: str) -> Optional[List[SemanticChunk]]:
+    def embed(self, text: str) -> List[SemanticChunk]:
         ...

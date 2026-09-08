@@ -44,7 +44,7 @@ class GeminiLlmClient(LlmClient):
             contents=request.user_prompt,
             config=genai.types.GenerateContentConfig(
                 system_instruction=request.system_prompt,
-                response_mime_type="application/json"
+                response_mime_type="application/json" if request.json_output else None
             ))
 
             for chunk in response:
