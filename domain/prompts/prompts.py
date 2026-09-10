@@ -7,7 +7,7 @@ class Prompt(ABC):
 
     @staticmethod
     @abstractmethod
-    def build(text) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         ...
 
     @staticmethod
@@ -49,9 +49,9 @@ class SynthesizePrompt(Prompt):
         return Response.model_validate_json(response)
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Recibirás información procedente de varias fuentes.
 
@@ -83,9 +83,9 @@ class TextClassificationPrompt(Prompt):
         return ClassificationResponse.model_validate_json(response)
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Clasifica el siguiente texto. Los tipos posibles son:
                 - news
@@ -109,14 +109,12 @@ class FormattingPrompt(Prompt):
         return Response.model_validate_json(response)
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
-            Devuelve el contenido en un formato json como este:
-            {
-                "content": "contenido en formato markdown de alta calidad."
-            }
+            Devuelve únicamente el contenido en formato Markdown.
+            No incluyas JSON ni explicaciones adicionales.
             """
         )
 
@@ -129,9 +127,9 @@ class NewsPrompt(Prompt):
         return response
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Resume objetivamente la noticia. Elimina sensacionalismo, opiniones y lenguaje emocional. 
             Conserva fechas, hechos, lugares, protagonistas, consecuencias y demás información objetiva.
@@ -152,9 +150,9 @@ class ForumPrompt(Prompt):
         return response
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Sirve de apoyo en la interacción social en la comunidad: 
              - analiza las directrices de la web, como las reglas de comportamiento de la comunidad
@@ -178,9 +176,9 @@ class PlanningPrompt(Prompt):
         return response
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Organiza la información en un itinerario paso a paso, lo más detallado y cronológico posible, 
             permitiendo a la persona anticipar cada momento. 
@@ -202,9 +200,9 @@ class GenericPrompt(Prompt):
         return response
 
     @staticmethod
-    def build(text: str) -> LlmRequest:
+    def build(user_prompt: str) -> LlmRequest:
         return LlmRequest(
-            user_prompt=text,
+            user_prompt=user_prompt,
             system_prompt="""
             Resume el contenido eliminando el lenguaje figurado o irónico,  
             
@@ -213,5 +211,27 @@ class GenericPrompt(Prompt):
             {
                 "content": "..."
             }
+            """
+        )
+
+class ContextSummaryPrompt(Prompt):
+    @staticmethod
+    def parse(response: str) -> str:
+        return Response.model_validate_json(response).content
+
+    @staticmethod
+    def build(user_prompt: str) -> LlmRequest:
+        return LlmRequest(
+            user_prompt=user_prompt,
+            system_prompt="""
+            Responde a la pregunta del usuario usando el contexto proporcionado en la propia query del usuario.
+            Sé descriptivo, pero mantente atado al contexto proporcionado.
+            Devuelve exclusivamente un JSON válido:
+            {
+                "content": "..."
+            }
+            Si la respuesta no está contenida en el contexto, el valor de la
+            respuesta debe ser "El texto no proporciona una respuesta a esta pregunta"
+            
             """
         )

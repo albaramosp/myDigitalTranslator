@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from google import genai
 
 from application.ports.embeding_client import EmbeddingClient
-from typing import List, Optional
+from typing import List
+import numpy as np
 
 from domain.semantic_chunk import SemanticChunk
 
@@ -25,7 +26,7 @@ class GeminiEmbeddingClient(EmbeddingClient):
             start += (chunk_size - overlap)
         return chunks
 
-    def embed(self, text: str) -> Optional[List[SemanticChunk]]:
+    def embed(self, text: str) -> List[SemanticChunk]:
         load_dotenv()
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
         client = genai.Client()
@@ -36,11 +37,11 @@ class GeminiEmbeddingClient(EmbeddingClient):
             contents=text
         )
         if not embedded_content.embeddings:
-            return None
+            return []
 
         vectors = embedded_content.embeddings[0].values
 
         return [
-            SemanticChunk(text=t, embedding=v)
+            SemanticChunk(text=t, embedding=np.array(v))
             for t, v in zip(chunks, vectors)
-        ]
+        ] if vectors else []

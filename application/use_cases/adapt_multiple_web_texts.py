@@ -45,14 +45,12 @@ class AdaptMultipleWebTexts:
         for chunk in ExecutePrompt(
                 self._llm,
                 formatting_prompt
-        ).stream(text):
+        ).stream(text, False):
             yield chunk
 
     def stream(self, texts: list[str]):
-        partial_txt = ""
         for chunk in self.format_streaming(self.pipeline(texts).content):
-            partial_txt += chunk.content
-            yield partial_txt
+            yield chunk.content
 
     def execute(self, texts: list[str]) -> str:
         return self.format(self.pipeline(texts).content).content

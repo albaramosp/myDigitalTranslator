@@ -41,6 +41,7 @@ def analyze_streaming(user_input: List[str]):
         logger.error(err)
         yield error_msg
 
+
 def analyze(user_input: List[str]) -> str:
     error_msg = "An error occurred. Please contact the site administrator."
 
@@ -63,9 +64,9 @@ def analyze(user_input: List[str]) -> str:
         return error_msg
 
 
-def search_summary(user_input, chunks):
-    c = SemanticSearch(GeminiEmbeddingClient())
-    return c.semantic_search(user_input, chunks, 1)[0]
+def search_relevant_content(user_input, chunks):
+    c = SemanticSearch(GeminiEmbeddingClient(), LlmFactory.create())
+    return c.semantic_search(user_input, chunks, 3)
 
 
 if __name__ == '__main__':
@@ -108,7 +109,7 @@ if __name__ == '__main__':
             )
             search_btn = gradio.Button("Search")
             search_btn.click(
-                fn=search_summary,
+                fn=search_relevant_content,
                 inputs=[search_box, semantic_index_state],
                 outputs=gradio.Markdown()
             )

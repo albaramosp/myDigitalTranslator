@@ -1,5 +1,5 @@
 from application.use_cases.execute_prompt import ExecutePrompt
-from domain.prompts.prompts import PromptFactory, TextClassificationPrompt, FormattingPrompt
+from domain.prompts.prompts import PromptFactory, TextClassificationPrompt
 from application.ports.llm_client import LlmClient
 
 

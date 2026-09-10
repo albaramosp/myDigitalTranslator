@@ -1,4 +1,7 @@
+from typing import Any, Generator
+
 from application.ports.llm_client import LlmClient
+from domain.llm.llm_response_chunk import LlmResponseChunk
 from domain.prompts.prompts import Prompt
 import logging
 
@@ -19,8 +22,9 @@ class ExecutePrompt:
         logger.debug(f"Tokens: {llm_response.tokens}")
         return llm_response.content
 
-    def stream(self, user_input: str):
+    def stream(self, user_input: str, json_output: bool = True) -> Generator[LlmResponseChunk, Any, None]:
         llm_request = self._prompt_builder.build(user_input)
+        llm_request.json_output = json_output
 
         for chunk in self._llm.stream(llm_request):
             yield chunk

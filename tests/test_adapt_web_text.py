@@ -19,7 +19,7 @@ class AdaptWebTextTests(unittest.TestCase):
                 tokens=100
             ),
             LlmResponse(
-                content='{"adapted_text": "A test news"}',
+                content='{"content": "A test news"}',
                 tokens=150
             )
         ]
@@ -27,7 +27,7 @@ class AdaptWebTextTests(unittest.TestCase):
         result = self._sut.execute("Text")
 
         assert self._mocked_llm_client.generate.call_count == 2
-        assert result == '{"adapted_text": "A test news"}'
+        assert result == '{"content": "A test news"}'
 
         calls = self._mocked_llm_client.generate.call_args_list
 

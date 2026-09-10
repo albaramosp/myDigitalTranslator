@@ -1,10 +1,16 @@
 # My Digital Translator
 
 My Digital Translator is a hexagonal architecture + LLM engineering demo 
-tool that combines web scraping with an LLM model. 
+tool that combines scrapping and LLM models to synthesize the webs' content.
+
 Its aim is to act as an assistant for autistic individuals that removes 
 overwhelming contents from a website and keeps just relevant ones, 
 adapting them to a clear, predictable and easy to read output.
+
+Technically, the code follows this path: URL collection  → Scrapping  → Classification  → Specialized prompt
+→ Synthesis and formatting  → Embeddings  → Summary → Semantic Search  → RAG
+→ Answer
+
 
 ## Example use cases
 ### Simplifying chaotic digital environments
