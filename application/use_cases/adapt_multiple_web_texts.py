@@ -1,6 +1,6 @@
 from application.use_cases.adapt_single_web_text import AdaptSingleWebText
 from application.use_cases.execute_prompt import ExecutePrompt
-from domain.prompts.prompts import FormattingPrompt, SynthesizePrompt, Response
+from domain.prompts import FormattingPrompt, SynthesizePrompt, Response
 from application.ports.llm_client import LlmClient
 
 

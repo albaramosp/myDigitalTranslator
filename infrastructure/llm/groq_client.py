@@ -1,5 +1,5 @@
 import logging
-from typing import Iterator
+from typing import Iterator, List, Optional
 
 from groq import Groq
 from application.ports.llm_client import LlmClient
@@ -9,6 +9,7 @@ import os
 from domain.llm.llm_request import LlmRequest
 from domain.llm.llm_response import LlmResponse
 from domain.llm.llm_response_chunk import LlmResponseChunk
+from domain.tools import ToolDefinition
 
 
 class GroqLlmClient(LlmClient):
@@ -20,7 +21,7 @@ class GroqLlmClient(LlmClient):
         )
         self.model = os.getenv("GROQ_MODEL")
 
-    def generate(self, request: LlmRequest):
+    def generate(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None):
         try:
             chat_completion = self._client.chat.completions.create(
             messages=[
@@ -46,7 +47,7 @@ class GroqLlmClient(LlmClient):
             logger = logging.getLogger("myDigitalTranslator")
             logger.error(f"Groq failed: {e}")
 
-    def stream(self, request: LlmRequest) -> Iterator[LlmResponseChunk]:
+    def stream(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None) -> Iterator[LlmResponseChunk]:
         try:
             chat_completion = self._client.chat.completions.create(
                 messages=[

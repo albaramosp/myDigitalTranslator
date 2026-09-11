@@ -1,5 +1,5 @@
 import logging
-from typing import Iterator
+from typing import Iterator, List, Optional
 
 from litellm import completion
 from application.ports.llm_client import LlmClient
@@ -8,6 +8,7 @@ import os
 from domain.llm.llm_request import LlmRequest
 from domain.llm.llm_response import LlmResponse
 from domain.llm.llm_response_chunk import LlmResponseChunk
+from domain.tools import ToolDefinition
 
 
 class LiteLlmClient(LlmClient):
@@ -19,7 +20,7 @@ class LiteLlmClient(LlmClient):
         self._groq_model = f"groq/{os.getenv('GROQ_MODEL')}"
         self._gemini_model = f"gemini/{os.getenv('GEMINI_MODEL')}"
 
-    def generate(self, request: LlmRequest):
+    def generate(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None):
         try:
             rs = completion(
                 messages=[
@@ -46,7 +47,7 @@ class LiteLlmClient(LlmClient):
             logger = logging.getLogger("myDigitalTranslator")
             logger.error(f"All models failed: {e}")
 
-    def stream(self, request: LlmRequest) -> Iterator[LlmResponseChunk]:
+    def stream(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None) -> Iterator[LlmResponseChunk]:
         try:
             rs = completion(
                 messages=[

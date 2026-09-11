@@ -2,7 +2,7 @@ from application.ports.embeding_client import EmbeddingClient
 import numpy as np
 from application.ports.llm_client import LlmClient
 from application.use_cases.execute_prompt import ExecutePrompt
-from domain.prompts.prompts import ContextSummaryPrompt
+from domain.prompts import ContextSummaryPrompt
 from domain.semantic_chunk import SemanticChunk
 
 

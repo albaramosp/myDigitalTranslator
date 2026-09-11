@@ -2,7 +2,7 @@ from typing import Any, Generator
 
 from application.ports.llm_client import LlmClient
 from domain.llm.llm_response_chunk import LlmResponseChunk
-from domain.prompts.prompts import Prompt
+from domain.prompts import Prompt
 import logging
 
 class ExecutePrompt:

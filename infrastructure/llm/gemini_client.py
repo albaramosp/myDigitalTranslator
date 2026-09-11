@@ -1,5 +1,5 @@
 import logging
-from typing import Iterator
+from typing import Iterator, List, Optional
 
 from google import genai
 from application.ports.llm_client import LlmClient
@@ -9,6 +9,7 @@ import os
 from domain.llm.llm_request import LlmRequest
 from domain.llm.llm_response import LlmResponse
 from domain.llm.llm_response_chunk import LlmResponseChunk
+from domain.tools import ToolDefinition
 
 
 class GeminiLlmClient(LlmClient):
@@ -19,7 +20,7 @@ class GeminiLlmClient(LlmClient):
         self._client = genai.Client()
         self.model = os.getenv("GEMINI_MODEL")
 
-    def generate(self, request: LlmRequest):
+    def generate(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None):
         try:
             response = self._client.models.generate_content(
                 model=self.model,
@@ -37,7 +38,7 @@ class GeminiLlmClient(LlmClient):
             logger = logging.getLogger("myDigitalTranslator")
             logger.error(f"Gemini failed: {e}")
 
-    def stream(self, request: LlmRequest) -> Iterator[LlmResponseChunk]:
+    def stream(self, request: LlmRequest, tools: Optional[List[ToolDefinition]] = None)-> Iterator[LlmResponseChunk]:
         try:
             response = self._client.models.generate_content_stream(
             model=self.model,
